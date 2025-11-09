@@ -1,5 +1,5 @@
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = process.env.OPENROUTER_MODEL ?? "openrouter/deepseek-3.1-v";
+const DEFAULT_MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-chat";
 const SITE_URL =
   process.env.OPENROUTER_SITE_URL ??
   process.env.OPENROUTER_REFERRER ??
