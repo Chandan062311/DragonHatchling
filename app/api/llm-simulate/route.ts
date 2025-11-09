@@ -59,10 +59,11 @@ export async function POST(request: Request) {
     plan = await requestSimulationPlan(prompt, languageHint, creativity);
   } catch (error) {
     console.error(error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
         error:
-          "The LLM could not produce a simulation plan. Adjust your prompt or verify the OpenRouter credentials."
+          `The LLM could not produce a simulation plan. Adjust your prompt or verify the OpenRouter credentials. (${message})`
       },
       { status: 502 }
     );

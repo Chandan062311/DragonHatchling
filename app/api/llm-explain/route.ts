@@ -70,8 +70,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ explanation: explanation.trim() });
   } catch (error) {
     console.error(error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to obtain an explanation from the LLM. Please retry." },
+      { error: `Failed to obtain an explanation from the LLM. (${message})` },
       { status: 502 }
     );
   }

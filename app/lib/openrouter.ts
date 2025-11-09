@@ -39,7 +39,8 @@ export async function callOpenRouter({
     throw new Error("OPENROUTER_API_KEY is not set");
   }
 
-  const referer = process.env.OPENROUTER_REFERRER ?? "http://localhost:3000";
+  const inferredReferer = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+  const referer = process.env.OPENROUTER_REFERRER ?? inferredReferer;
   const appTitle = process.env.OPENROUTER_APP_TITLE ?? "Synapse Monitor";
 
   const body: Record<string, unknown> = {
@@ -66,7 +67,7 @@ export async function callOpenRouter({
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`OpenRouter request failed: ${response.status} ${errorText}`);
+    throw new Error(`OpenRouter request failed (${response.status}): ${errorText}`);
   }
 
   const payload = (await response.json()) as OpenRouterResponse;
@@ -84,6 +85,6 @@ export async function callOpenRouterJson<T>(options: OpenRouterCallOptions) {
   try {
     return JSON.parse(raw) as T;
   } catch (error) {
-    throw new Error(`Failed to parse model JSON: ${(error as Error).message}`);
+    throw new Error(`Failed to parse model JSON: ${(error as Error).message}. Raw response: ${raw}`);
   }
 }
