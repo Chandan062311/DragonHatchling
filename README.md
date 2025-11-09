@@ -29,7 +29,7 @@ Create a `.env.local` file based on the included sample:
 cp .env.local.example .env.local
 ```
 
-Populate `OPENROUTER_API_KEY` with your OpenRouter key (keep it out of version control). Adjust the optional `OPENROUTER_MODEL`, `OPENROUTER_REFERRER`, and `OPENROUTER_APP_TITLE` values as needed.
+Populate `OPENROUTER_API_KEY` with your OpenRouter key (keep it out of version control). Adjust the optional `OPENROUTER_MODEL`, `OPENROUTER_SITE_URL`, `OPENROUTER_REFERRER`, and `OPENROUTER_APP_TITLE` values as needed. When deployed on Vercel, `OPENROUTER_SITE_URL` should match the live domain (e.g. `https://dragonhatchling.vercel.app`).
 
 ## Getting Started
 

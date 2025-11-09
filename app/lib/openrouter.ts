@@ -1,5 +1,10 @@
-const DEFAULT_MODEL = process.env.OPENROUTER_MODEL ?? "openrouter/deepseek-3.1-v";
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_MODEL = process.env.OPENROUTER_MODEL ?? "openrouter/deepseek-3.1-v";
+const SITE_URL =
+  process.env.OPENROUTER_SITE_URL ??
+  process.env.OPENROUTER_REFERRER ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+const APP_TITLE = process.env.OPENROUTER_APP_TITLE ?? "Synapse Monitor";
 
 type MessageRole = "system" | "user" | "assistant";
 
@@ -39,10 +44,6 @@ export async function callOpenRouter({
     throw new Error("OPENROUTER_API_KEY is not set");
   }
 
-  const inferredReferer = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
-  const referer = process.env.OPENROUTER_REFERRER ?? inferredReferer;
-  const appTitle = process.env.OPENROUTER_APP_TITLE ?? "Synapse Monitor";
-
   const body: Record<string, unknown> = {
     model: DEFAULT_MODEL,
     messages,
@@ -59,14 +60,20 @@ export async function callOpenRouter({
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": referer,
-      "X-Title": appTitle
+      "HTTP-Referer": SITE_URL,
+      "X-Title": APP_TITLE
     },
     body: JSON.stringify(body)
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
+    let errorText: string;
+    try {
+      const payload = (await response.json()) as { error?: { message?: string }; message?: string };
+      errorText = payload?.error?.message ?? payload?.message ?? "Unknown response body";
+    } catch {
+      errorText = await response.text();
+    }
     throw new Error(`OpenRouter request failed (${response.status}): ${errorText}`);
   }
 
